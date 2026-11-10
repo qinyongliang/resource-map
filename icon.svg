@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Resource graph">
+  <title>Resource graph</title>
+  <g fill="none" stroke="#2f6f4f" stroke-width="6" stroke-linecap="round">
+    <path d="M38 40 L64 62"/>
+    <path d="M90 36 L64 62"/>
+    <path d="M64 62 L46 94"/>
+    <path d="M64 62 L88 92"/>
+  </g>
+  <g fill="#2f6f4f">
+    <circle cx="38" cy="40" r="13"/>
+    <circle cx="90" cy="36" r="10"/>
+    <circle cx="46" cy="94" r="11"/>
+    <circle cx="88" cy="92" r="9"/>
+  </g>
+  <circle cx="64" cy="62" r="16" fill="#e8f3ed" stroke="#2f6f4f" stroke-width="6"/>
+  <circle cx="64" cy="62" r="5" fill="#2f6f4f"/>
+</svg>

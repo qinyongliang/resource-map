@@ -1,0 +1,7 @@
+node_modules/
+*.tgz
+*.log
+
+# Local demo projects used while developing
+/demo-proj/
+/demo/

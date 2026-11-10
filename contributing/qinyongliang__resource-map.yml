@@ -1,0 +1,11 @@
+# Submission entry for awesome-dsh-plugin.
+# Copy this file to data/plugins/qinyongliang__resource-map.yml in a fork of
+# awesome-dsh-plugin/awesome-dsh-plugin and open one PR adding just that file.
+# Only description.en is required; the maintainers fill in a missing translation.
+url: https://github.com/qinyongliang/resource-map
+name: qinyongliang/resource-map
+category: tools
+description:
+  en: Project-local linked Markdown graph of resources, notes, timelines and other related data under .resource-map, with two Agent tools and a conversation-side graph panel; initialization also writes the same CLI into the project so a runtime without DSH can still validate and query it.
+  zh: 把项目相关的资源、笔记、时间线及其它关联数据整理成 .resource-map 下可链接的 Markdown 关系图，提供两个 Agent 工具和会话侧关系图面板；初始化还会把同一份 CLI 写入项目，脱离 DSH 也能校验和查询。
+icon: https://raw.githubusercontent.com/qinyongliang/resource-map/main/icon-180.png

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Resource map",
+    "description": "Builds a project-local linked Markdown graph of resources, notes, timelines and other related data under .resource-map, with graph tools and a conversation-side panel."
+  }
+}

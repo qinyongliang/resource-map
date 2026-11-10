@@ -1,0 +1,75 @@
+{
+  "name": "dsh-resource-map",
+  "version": "0.1.0",
+  "description": "资源地图：把项目相关的资源、笔记、时间线及其它关联数据整理成 .resource-map 下可链接的 Markdown 关系图。",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qinyongliang/resource-map.git"
+  },
+  "homepage": "https://github.com/qinyongliang/resource-map#readme",
+  "bugs": {
+    "url": "https://github.com/qinyongliang/resource-map/issues"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./core": "./lib/core.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./graph3d": "./lib/graph3d.js"
+  },
+  "bin": {
+    "resource-graph": "./scripts/resource-graph.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ],
+      "platform": "web"
+    }
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "files": [
+    "lib",
+    "scripts",
+    "cordis.patch.yml",
+    "README.md",
+    "README.en.md",
+    "docs",
+    "LICENSE",
+    "locale",
+    "icon.svg"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/resource-graph.mjs check --root .",
+    "index": "node scripts/resource-graph.mjs index --root .",
+    "hook:install": "node scripts/resource-graph.mjs hook install --root .",
+    "audit:public": "node scripts/audit-public-content.mjs .",
+    "test": "node --test && npm run audit:public"
+  },
+  "keywords": [
+    "dsh",
+    "cordis",
+    "okf",
+    "resource-graph",
+    "knowledge-graph",
+    "wikilinks",
+    "markdown",
+    "sqlite"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  }
+}

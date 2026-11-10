@@ -1,0 +1,5 @@
+# Mount the persistent Host plugin. Its dsh.client metadata publishes lib/client.js
+# into the Web boot manifest while this row is active.
+- insert:
+    - id: resource-graph
+      name: 'dsh-resource-map'
