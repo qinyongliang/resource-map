@@ -1,0 +1,3 @@
+# System Aggregation Reference
+
+Reconcile component IDs through typed edges; distinguish source projects from runtime instances and shared dependencies from environment-specific ones. Require a logging collection or inspection entry for each important path; missing entries remain planned gaps. Do not infer an environment's topology from another environment or copy credentials into the system resource.

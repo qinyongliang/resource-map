@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kinds": [],
+  "environments": [
+    "prod",
+    "test",
+    "staging",
+    "dev",
+    "shared",
+    "unknown"
+  ],
+  "statuses": [
+    "draft",
+    "active",
+    "deprecated",
+    "inactive",
+    "unknown"
+  ]
+}

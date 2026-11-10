@@ -1,0 +1,3 @@
+# Public Release Gate
+
+Managed templates and public Skills contain methodology and synthetic placeholders only. Reject real organization/customer/project/resource names, hostnames, domains, private or public endpoints copied from operations, IPs, account IDs, ports tied to actual systems, schema/table/queue names, incident timestamps, build IDs, capacity figures, absolute user paths, credentials, secret-like assignments, private keys, raw logs, source bodies, business rows and payloads. Examples must use neutral IDs such as example-service and documentation-only domains. Run the package public-content audit and tests before release.

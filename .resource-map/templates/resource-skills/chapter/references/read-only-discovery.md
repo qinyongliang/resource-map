@@ -1,0 +1,3 @@
+# Chapter Analysis Reference
+
+Admission gate: preserve full text; identify volume/chapter order; provide previous/next and belongs_to edges; when a reviewed batch spans multiple chapters, ensure its chapter-order timeline exists and chapters/events with known ranges receive attributed placements; attach only evidence-backed entity/event/action edges with anchors such as [[chapter-id#^evidence-id]]. Keyword occurrence alone stays in prose or discoveries and does not create an edge. Mark shallow/unread analysis as draft rather than claiming completion.

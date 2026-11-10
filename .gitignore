@@ -1,0 +1,4 @@
+# The graph cache is project-local and reproducible.
+.resource-map/graph.sqlite
+.resource-map/graph.sqlite-wal
+.resource-map/graph.sqlite-shm

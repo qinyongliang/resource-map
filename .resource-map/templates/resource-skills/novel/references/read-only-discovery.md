@@ -1,0 +1,3 @@
+# Novel Analysis Reference
+
+Required layers are novel -> volume -> chapter -> evidence-backed entity/event/action -> timeline. For a multi-chapter event extraction batch, the deliverable is incomplete until a chapter-order timeline resource and attributed placements for every chapter-scoped event exist. This is a professional Skill quality gate, not a universal `resource_graph_check` validator rule. A chapter is one context unit with full text and stable heading/block anchors. Do not create chapter-resource copies, generic binding nodes, one node per keyword hit, or co-occurrence edges without semantic evidence. Keep raw source provenance and analysis status explicit.

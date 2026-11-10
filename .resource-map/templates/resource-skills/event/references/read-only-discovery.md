@@ -1,0 +1,3 @@
+# Event Analysis Reference
+
+Admission gate: before/after state or a durable consequence must be expressible. Use occurs_in, involves, causes, reveals, resolves and follows relations. In every multi-chapter extraction batch, join each event whose chapter scope is known to the chapter-order timeline through attributed edges with start/end/label/precision/certainty before declaring the batch complete. Dialogue snippets and keyword co-occurrence are not events.

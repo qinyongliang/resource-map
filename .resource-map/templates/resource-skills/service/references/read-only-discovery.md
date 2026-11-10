@@ -1,0 +1,3 @@
+# Service Read-only Discovery
+
+Begin from the approved scripts/.env entry. Correlate process/container/workload metadata, bounded listener-to-process projection, health endpoint metadata, restart policy, shallow mounts, log configuration and current build/image/commit evidence. Do not dump Env, full logs, configuration values, request payloads or business data. Health passing proves only the health probe. Record evidence time, exclusions, unresolved owner/version mismatches and the next bounded check.

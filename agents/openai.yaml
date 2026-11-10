@@ -1,0 +1,4 @@
+interface:
+  display_name: "资源地图"
+  short_description: "把项目相关的资源与关系整理成一张可链接的 Markdown 关系图"
+  default_prompt: "Use $resource-map to map this project's resources and relationships into .resource-map without exposing secrets."
