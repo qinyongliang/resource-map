@@ -32,10 +32,49 @@ function degreeMap(edges) { const out = new Map(); for (const edge of edges) { o
 function matchesDirection(edge, id, direction) { return direction === 'incoming' ? edge.target === id : direction === 'outgoing' ? edge.source === id : edge.source === id || edge.target === id }
 function other(edge, id) { return edge.source === id ? edge.target : edge.source }
 
-function searchRows(rows, edges, args) {
+// FTS5 trigram needs at least three characters per phrase, so two-character CJK
+// words cannot be answered by node_fts and stay with the JS scorer. Every phrase
+// is quoted so '.', '/' and '-' are treated as text rather than FTS operators.
+// Interior punctuation is preserved: trimming "svc-0001" down to "svc-" would
+// match every row whose id starts with "svc-".
+function ftsMatchQuery(query) {
+  const phrases = []
+  for (const match of String(query || '').toLowerCase().matchAll(/[a-z0-9_./:-]+|[\u4e00-\u9fff]+/g)) {
+    const phrase = match[0]
+    if (phrase.replace(/[^a-z0-9\u4e00-\u9fff]/g, '').length < 3 || phrases.includes(phrase)) continue
+    phrases.push(phrase)
+  }
+  return phrases.map((phrase) => `"${phrase.replace(/"/g, '""')}"`).join(' OR ')
+}
+
+const FTS_CANDIDATE_CAP = 500
+
+function ftsCandidateIds(db, query) {
+  const expression = ftsMatchQuery(query)
+  if (!expression) return null
+  try {
+    const rows = db.prepare('SELECT id FROM node_fts WHERE node_fts MATCH ? ORDER BY bm25(node_fts) LIMIT ?').all(expression, FTS_CANDIDATE_CAP)
+    // Hitting the cap means the list may be truncated, so it cannot be trusted
+    // as a complete candidate set; signal "no pruning" rather than drop rows.
+    if (rows.length >= FTS_CANDIDATE_CAP) return null
+    return new Set(rows.map((row) => row.id))
+  } catch {
+    return null
+  }
+}
+
+function searchRows(rows, edges, args, db) {
   const degrees = degreeMap(edges); const relationship = args.relationship
   const relationIds = relationship ? new Set(edges.filter((edge) => edge.relation === relationship).flatMap((edge) => args.direction === 'incoming' ? [edge.target] : args.direction === 'outgoing' ? [edge.source] : [edge.source, edge.target])) : null
-  return rows.map((row) => ({ row, score: score(row, args.query), degree: degrees.get(row.id) || 0 }))
+  let candidates = rows
+  if (db && args.query && String(args.query).trim()) {
+    // node_fts was previously built on every rebuild and never read. Only prune
+    // when FTS genuinely narrows the set; an empty result falls back to the full
+    // scan on purpose, because the JS scorer is what keeps typo queries working.
+    const ids = ftsCandidateIds(db, args.query)
+    if (ids && ids.size && ids.size < rows.length) candidates = rows.filter((row) => ids.has(row.id))
+  }
+  return candidates.map((row) => ({ row, score: score(row, args.query), degree: degrees.get(row.id) || 0 }))
     .filter((item) => (!args.query || item.score > 0) && (!args.kind || item.row.kind === args.kind) && (!args.environment || item.row.environment === args.environment) && (!relationIds || relationIds.has(item.row.id)) && (args.min_degree == null || item.degree >= args.min_degree) && (args.max_degree == null || item.degree <= args.max_degree))
     .sort((a, b) => args.sort_by === 'degree' ? b.degree - a.degree || b.score - a.score : b.score - a.score || b.degree - a.degree)
 }
@@ -128,7 +167,7 @@ export function queryProjectGraph(root, args = {}) {
       const paths = twohop(rows, edges, { start: args.under, middle: args.resource, first: args.first || 'hosts_service,runs_on_server', second: args.second || 'used_by_project,used_by_service,uses_service', middle_kind: args.resource_kind || 'service', end_kind: args.user_kind, environment: args.environment, limit: args.limit || 50, content_chars: args.content_chars || 500 })
       return { mode, configured: true, paths, graph: subgraph(rows, edges, paths.flatMap((path) => [path.start.id, path.middle.id, path.end.id])) }
     }
-    const selected = searchRows(rows, edges, args).slice(0, limit).map((item) => ({ ...node(item.row, args.with_content || mode === 'quick', args.content_chars || (mode === 'quick' ? 700 : 1200)), score: item.score, degree: item.degree }))
+    const selected = searchRows(rows, edges, args, db).slice(0, limit).map((item) => ({ ...node(item.row, args.with_content || mode === 'quick', args.content_chars || (mode === 'quick' ? 700 : 1200)), score: item.score, degree: item.degree }))
     if (args.with_relations || mode === 'quick') attachRelations(selected, edges, clamp(args.relation_limit || args.edge_limit, mode === 'quick' ? 5 : 20, 200), args.relationship)
     return { mode, configured: true, results: selected, graph: subgraph(rows, edges, selected.map((item) => item.id)) }
   } finally { db.close() }

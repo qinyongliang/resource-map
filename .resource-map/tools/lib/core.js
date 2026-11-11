@@ -214,9 +214,18 @@ function createSchema(db) {
     CREATE TABLE IF NOT EXISTS source_state (path TEXT PRIMARY KEY, digest TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS nodes (id TEXT PRIMARY KEY, kind TEXT NOT NULL, environment TEXT NOT NULL, status TEXT NOT NULL, title TEXT NOT NULL, path TEXT NOT NULL UNIQUE, description TEXT NOT NULL, text TEXT NOT NULL, owners TEXT NOT NULL DEFAULT '[]', tags TEXT NOT NULL DEFAULT '[]');
     CREATE TABLE IF NOT EXISTS edges (source TEXT NOT NULL, relation TEXT NOT NULL, target TEXT NOT NULL, attributes TEXT NOT NULL DEFAULT '{}', PRIMARY KEY (source, relation, target));
-    CREATE VIRTUAL TABLE IF NOT EXISTS node_fts USING fts5(id UNINDEXED, title, description, text, tokenize = 'unicode61');
+    CREATE VIRTUAL TABLE IF NOT EXISTS node_fts USING fts5(id UNINDEXED, title, description, text, tokenize = 'trigram');
     CREATE INDEX IF NOT EXISTS idx_edges_source ON edges(source); CREATE INDEX IF NOT EXISTS idx_edges_target ON edges(target); CREATE INDEX IF NOT EXISTS idx_nodes_kind_env ON nodes(kind, environment);
   `)
+  // CREATE VIRTUAL TABLE IF NOT EXISTS is a no-op for an existing table, so a
+  // database built with the old unicode61 tokenizer would keep it forever.
+  // unicode61 treats a whole Chinese sentence as one token, which makes every
+  // CJK substring query miss; drop the stale table so it is rebuilt as trigram.
+  const ftsSql = db.prepare("SELECT sql FROM sqlite_master WHERE name = 'node_fts'").get()?.sql || ''
+  if (ftsSql && !/tokenize\s*=\s*['"]trigram['"]/.test(ftsSql)) {
+    db.exec('DROP TABLE IF EXISTS node_fts')
+    db.exec("CREATE VIRTUAL TABLE node_fts USING fts5(id UNINDEXED, title, description, text, tokenize = 'trigram')")
+  }
   const edgeColumns = db.prepare('PRAGMA table_info(edges)').all().map((column) => column.name)
   if (!edgeColumns.includes('attributes')) { db.exec('ALTER TABLE edges ADD COLUMN attributes TEXT NOT NULL DEFAULT \'{}\'') }
   db.exec('DROP TABLE IF EXISTS timeline_entries')
